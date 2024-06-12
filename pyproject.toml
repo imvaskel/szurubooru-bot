@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "szurubooru-bot"
+version = "0.1.0"
+description = "Bot to upload images from discord to szurubooru."
+authors = ["ImVaskel <49348256+ImVaskel@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poe.tasks]
+run = "python -O bot.py"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+"discord.py" = "^2.3.2"
+jishaku = "^2.5.2"
+pyszuru = "^0.3.1"
+gallery-dl = "^1.27.0"
+yt-dlp = "^2024.5.27"
+szurubooru-toolkit = "^1.0.1"
+
+[tool.poetry.extras]
+"discord.py" = [ "speed" ]
+aiohttp = [ "speedups" ]
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4.8"
+pyright = "^1.1.366"
+poethepoet = "^0.26.1"
+
+[tool.pyright]
+exclude = ["**/__pycache__", "build", "dist", "docs", ".venv"]
+include = ["cogs/", "bot.py"]
+pythonVersion = "3.11"
+reportUnnecessaryTypeIgnoreComment = "warning"
+reportUnusedImport = "error"
+typeCheckingMode = "basic"
+venv = ".venv/"
+venvPath = "."
+
+[tool.ruff]
+fix = true
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+ignore = [
+    "S101" # Ignore assert
+]
+select = [
+    # flake8-2020
+    "YTT", # flake8-bandit
+    "S",   # flake8-bugbear
+    "B",   # flake8-builtins
+    "A",   # flake8-comprehensions
+    "C4",  # flake8-debugger
+    "T10", # flake8-simplify
+    "SIM", # isort
+    "I",   # mccabe
+    "C90", # pycodestyle
+    "E",
+    "W",   # pyflakes
+    "F",   # pygrep-hooks
+    "PGH", # pyupgrade
+    "UP",  # ruff
+    "RUF", # tryceratops
+    "TRY",
+]
+
+[tool.ruff.format]
+preview = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+    bot:
+        restart: unless-stopped
+        build:
+          context: .
+          dockerfile: Dockerfile
+        environment:
+          JISHAKU_NO_UNDERSCORES: true
