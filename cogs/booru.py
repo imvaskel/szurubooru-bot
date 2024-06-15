@@ -120,7 +120,7 @@ class Booru(commands.Cog):
 
     @booru.command()
     @commands.is_owner()
-    async def add(self, ctx: commands.Context, strip_query: bool = True, *, url: str):
+    async def add(self, ctx: commands.Context, strip_query: bool | None = True, *, url: str):
         await ctx.defer()
 
         urls = url.split(",") if "," in url else [url]
