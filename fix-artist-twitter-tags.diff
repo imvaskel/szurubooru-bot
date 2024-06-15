@@ -6,8 +6,8 @@
              if site == 'twitter':
 -                metadata['tags'] += extract_twitter_artist(metadata)
 +                artist_info = extract_twitter_artist(metadata)
-+                if not all(bool(i) for i in artist_info):
-+                    metadata.append(metadata["author"]["name"])
++                if not all(artist_info):
++                    metadata["tags"].append(metadata["author"]["name"])
 +                else:
 +                    metadata['tags'] += artist_info
 
