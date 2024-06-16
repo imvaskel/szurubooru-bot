@@ -84,6 +84,9 @@ class Booru(commands.Cog):
         return post
 
     async def booru_from_url_context(self, interaction: discord.Interaction, message: discord.Message):
+        if not await self.bot.is_owner(interaction.user):
+            return await interaction.response.send_message("You are not the owner of this bot!", ephemeral=True)
+
         await interaction.response.defer(ephemeral=True, thinking=True)
 
         matches = URL_REGEX.findall(message.content)
