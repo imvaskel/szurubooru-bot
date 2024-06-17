@@ -19,14 +19,13 @@ URL_REGEX = re.compile(
     r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
 )
 
+
 class URLSubmitModal(discord.ui.Modal, title="Booru Submit"):
-    urls = discord.ui.TextInput(
-        label="URLs",
-        style=discord.TextStyle.long
-    )
+    urls = discord.ui.TextInput(label="URLs", style=discord.TextStyle.long)
 
     async def on_submit(self, interaction: discord.Interaction[commands.Bot]) -> None:
         await interaction.response.defer()
+
 
 class Booru(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -145,7 +144,7 @@ class Booru(commands.Cog):
             return await ctx.send("Links must be filled out if this is not an interaction.")
         else:
             await ctx.defer()
-            url: str = links # type: ignore
+            url: str = links  # type: ignore
 
         urls = url.split(",") if "," in url else [url]
 
