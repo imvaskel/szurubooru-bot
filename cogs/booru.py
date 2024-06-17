@@ -59,7 +59,7 @@ class Booru(commands.Cog):
         (stdout, _) = await command.communicate()
 
         if command.returncode != 0:
-            raise Exception(f"There was an error when communicating with gallery-dl: {stdout.decode()}")  # noqa: TRY002, TRY003
+            raise Exception(f"There was an error when communicating with gallery-dl: {stdout.decode()}")
 
         return [line.lstrip("# ") for line in stdout.decode().splitlines()]
 

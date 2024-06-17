@@ -45,7 +45,9 @@ target-version = "py311"
 
 [tool.ruff.lint]
 ignore = [
-    "S101" # Ignore assert
+    "S101", # Ignore assert
+    "TRY002", # Ignore bare exception
+    "TRY003", # Ignore base exception long message
 ]
 select = [
     # flake8-2020
