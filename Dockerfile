@@ -1,31 +1,25 @@
-FROM python:3.11-slim
-
-LABEL maintainer="vaskel <contact@vaskel.xyz>"
-
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_NO_INTERACTION=1 \
-    PYSETUP_PATH="/opt/pysetup" \
-    VENV_PATH="/opt/pysetup/.venv"
-
-ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim 
 
 RUN apt-get update \
     && apt-get install gcc git curl -y
 
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
 WORKDIR /app
-COPY poetry.lock pyproject.toml fix-artist-twitter-tags.diff ./
 
-RUN poetry install --no-dev
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
 
-# Boy do i love setting up diffs
-RUN patch -p1 < fix-artist-twitter-tags.diff
+# Install the project's dependencies using the lockfile and settings
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev
 
-COPY . /app/
+ADD . /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
-CMD [ "poetry", "run", "python", "-O", "bot.py" ]
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+ENTRYPOINT []
+
+CMD ["python3", "-O", "bot.py"]
