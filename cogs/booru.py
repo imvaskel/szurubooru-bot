@@ -45,7 +45,7 @@ class Booru(commands.Cog):
 
         return t
 
-    async def get_gallery_from_url(self, url: str) -> list[str]:
+    async def get_gallery_from_url(self, url: str, *args) -> list[str]:
         command = await asyncio.create_subprocess_exec(
             sys.executable,
             "-m",
@@ -54,6 +54,7 @@ class Booru(commands.Cog):
             "--write-metadata",
             "-D",
             "./tmp",
+            *args,
             stdout=subprocess.PIPE,
         )
         (stdout, _) = await command.communicate()
@@ -170,6 +171,35 @@ class Booru(commands.Cog):
 
         joined = "\n".join(f"{config.booru_url}/post/{p.id_}" for p in posts)
         await ctx.send(f"Returned posts: {joined or 'None'}")
+
+        await asyncio.to_thread(shutil.rmtree, "./tmp")  # clean up
+
+    @commands.hybrid_command(name="bookmarks")
+    async def import_from_twitter_bookmarks(self, ctx: commands.Context, limit: int = 5):
+        if not Path("./cookies.txt").exists():
+            await ctx.send("File ``cookies.txt`` does not exist. Fill this out with twitter cookies")
+            return
+
+        paths: list[str] = await self.get_gallery_from_url(
+            "https://twitter.com/i/bookmarks", "-C", "./cookies.txt", "--range", f"0-{limit}"
+        )
+        posts: list[pyszuru.Post] = []
+        for path in paths:
+            realpath = Path(path)
+            with realpath.with_suffix(f"{realpath.suffix}.json").open() as fp:
+                contents = json.load(fp)
+
+            user = contents["author"]["name"]
+            tweet_id = contents["tweet_id"]
+            url = f"https://twitter.com/{user}/status/{tweet_id}"
+
+            try:
+                posts.append(await self.upload_file(realpath, url))
+            except:
+                pass
+
+        joined = "\n".join(f"{config.booru_url}/post/{p.id_}" for p in posts)
+        await ctx.send(f"Returned posts: {joined or 'None'}", ephemeral=True)
 
         await asyncio.to_thread(shutil.rmtree, "./tmp")  # clean up
 

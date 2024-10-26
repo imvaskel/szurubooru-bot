@@ -20,7 +20,7 @@ class Errors(commands.Cog):
         if isinstance(exc, commands.CommandInvokeError):
             err = exc.original
 
-            lines = traceback.format_exception(type(err), err, exec.__traceback__)
+            lines = traceback.format_exception(type(err), err, err.__traceback__)
             tb = "".join(lines)
 
             if len(tb) > 1700:
